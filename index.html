@@ -4,7 +4,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Binesh Narayanan</title>
-	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 	<div id="header" class="container table-responsive" align="center">
@@ -74,8 +74,20 @@
 	<input type="hidden" id="gameId" value=""></input>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script>
+$(document).ready(function() {
+	$.ajax({
+		url:'http://bineshnarayanan.github.io/dictionary.json',
+		dataType: 'json',
+		success:function(res){
+			alert('success');
+		},
+		error:function(res){
+			alert('!_a_success');
+		}
+	});
+});
 function startNewGame(){
 	alert('Development in Progress');
 }
@@ -83,6 +95,5 @@ function startNewGame(){
 function getOverview(){
 	alert('Coming Soon');
 }
-
 </script>
 </html>
