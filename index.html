@@ -82,7 +82,7 @@ $(document).ready(function() {
 		dataType: 'json',
 		success:function(res){
 			var items = [];
-			$.each( data, function( key, val ) {
+			$.each( res, function( key, val ) {
 				var obj = new Object();
 				obj.word = key;
 				obj.meaning = val;
