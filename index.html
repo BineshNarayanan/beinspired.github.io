@@ -81,7 +81,13 @@ $(document).ready(function() {
 		url:'http://bineshnarayanan.github.io/dictionary.json',
 		dataType: 'json',
 		success:function(res){
-			alert('success');
+			var items = [];
+			$.each( data, function( key, val ) {
+				var obj = new Object();
+				obj.word = key;
+				obj.meaning = val;
+				items.push(obj);
+			});
 		},
 		error:function(res){
 			alert('!_a_success');
