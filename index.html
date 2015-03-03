@@ -165,7 +165,7 @@ function displayGuessedWord(guessedWord){
 }
 
 function randomizer(){
-	return Math.floor((Math.random() * 1) + 1);
+	return Math.floor((Math.random() * 42) + 1);
 }
 
 function loadWords(){
@@ -182,29 +182,6 @@ function loadWords(){
 	return words;
 	
 	/*
-	$.ajax({
-		url:'dictionary.json',
-		type:'GET',
-		data: '',
-		dataType: 'json',
-		success:function(wordDict){
-			wordDict = JSON.parse(wordDict);
-			var words = [];
-			$.each( wordDict, function( key, val ) {
-				var obj = new Object();
-				obj.word = key;
-				obj.meaning = val;
-				words.push(obj);
-			});
-			return words;
-		},
-		error:function(res){
-			alert('!_a_success');
-		}
-	});
-	*/
-	
-	/*
 	wordDict = "{\"DIPLOBLASTIC\":\"Characterizing the ovum when it has two primary germinallayers.\",\"DEFIGURE\":\"To delineate.These two stones as they are here defigured. Weever.\"}";
 	wordDict = JSON.parse(wordDict);
 	var words = [];
@@ -218,9 +195,5 @@ function loadWords(){
 	*/
 }
 
-
-function getOverview(){
-	alert('Coming Soon');
-}
 </script>
 </html>
