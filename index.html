@@ -17,7 +17,7 @@
 			<tr>
 				<td><input class="btn btn-success" type="button" value="Overview" onclick="getOverview()"/></td>
 				<td>&nbsp;</td>
-				<td><input class="btn btn-success" type="button" value="New Game" onclick="startNewGame();"></input></td>
+				<td><input class="btn btn-success" type="button" value="New Game" id="newGame"></input></td>
 			</tr>
 		</table>
 		<br>
@@ -29,7 +29,10 @@
 		</h2>
 		<br>
 		<h2>
-			<span id="blankWord" class="label label-default"></span>
+			<span id="blankWord" class="label label-default"></span><br>
+			<h3>
+				<span id="meaning"></span>
+			</h3>
 		</h2>
 		<span id="playarea" style="display:none;">
 			<h3>
@@ -77,8 +80,10 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function() {
-	$.ajax({
+	/*$.ajax({
 		url:'http://bineshnarayanan.github.io/dictionary.json',
+		type:'GET',
+		data: '',
 		dataType: 'json',
 		success:function(res){
 			var items = [];
@@ -93,11 +98,44 @@ $(document).ready(function() {
 		error:function(res){
 			alert('!_a_success');
 		}
+	});*/
+	
+	words = loadWords()
+	
+	
+	$("#newGame").click(function(e){
+		wordToBeGuessed = words[randomizer()];
+		for(i = 0 ; i < wordToBeGuessed.word.length ; i++){
+			$("#blankWord" ).append(".");
+		}
+	//	alert(randomizer());
+	//	alert(words[randomizer()].word);
+		$('#meaning').html('<b>Meaning : </b>'+wordToBeGuessed.meaning);
+		$("#playarea").attr('style','display:block');
+		$("#guessarea").attr('style','display:block');
+		$("#noOfAttemptLeft").html(11);
 	});
+
+	
 });
-function startNewGame(){
-	alert('Development in Progress');
+
+function randomizer(){
+	return Math.floor((Math.random() * 1) + 1);
 }
+
+function loadWords(){
+	wordDict = "{\"DIPLOBLASTIC\":\"Characterizing the ovum when it has two primary germinallayers.\",\"DEFIGURE\":\"To delineate.These two stones as they are here defigured. Weever.\"}";
+	wordDict = JSON.parse(wordDict);
+	var words = [];
+	$.each( wordDict, function( key, val ) {
+		var obj = new Object();
+		obj.word = key;
+		obj.meaning = val;
+		words.push(obj);
+	});
+	return words;
+}
+
 
 function getOverview(){
 	alert('Coming Soon');
