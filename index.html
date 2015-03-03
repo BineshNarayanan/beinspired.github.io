@@ -171,7 +171,7 @@ function randomizer(){
 
 function loadWords(){
 	jQuery.get('dictionary.json', function(wordDict) {
-		wordDict = JSON.parse(wordDict);
+		//wordDict = JSON.parse(wordDict);
 		var words = [];
 		$.each( wordDict, function( key, val ) {
 			var obj = new Object();
