@@ -62,7 +62,6 @@
 <script>
 $(document).ready(function() {
 	
-	
 	words = loadWords();
 	wordToBeGuessed = '';
 	guessedWord = '';
@@ -171,18 +170,15 @@ function randomizer(){
 
 function loadWords(){
 	var words = [];
-	words = jQuery.get('dictionary.json', function(wordDict) {
+	jQuery.get('dictionary.json', function(wordDict) {
 		//wordDict = JSON.parse(wordDict);
-		
 		$.each( wordDict, function( key, val ) {
 			var obj = new Object();
 			obj.word = key;
 			obj.meaning = val;
 			words.push(obj);
 		});
-		return words;
 	});
-	
 	return words;
 	
 	/*
