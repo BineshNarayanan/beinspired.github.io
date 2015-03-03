@@ -232,7 +232,7 @@ function loadWords(){
 }
 
 function onlyAlphabets() {
-	var regex = /^[a-zA-Z]*$/;
+	var regex = /^[a-zA-Z\s]*$/;
 	if (regex.test($("#letter").val())) {
 		return true;
 	} else {
