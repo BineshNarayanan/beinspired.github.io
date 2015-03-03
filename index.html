@@ -3,7 +3,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Binesh Narayanan</title>
+	<title>Lets Play</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -20,17 +20,25 @@
 		</table>
 		<br>
 		<br>
+		<h5>
+			<span id="showRules" style="display:block"><b>See Rules >></b></span><span id="hideRules" style="display:none"><b>Hide Rules <<</b></span>
+			<span id="rules" style="display:none">
+				@ Guess the word by guessing one letter at a time. <br>
+				@ A successful attempt wouldnt reduce the number of attempts.
+				@ You get total 11 attempts.
+			</span>
+		</h5>
 	</div>
 	<div id="body" class="container" align="center" style="display:block;">
 		<h2>
 			Guess the WORD!!
 		</h2>
 		<br>
+		<h5>
+			<span id="showHint" style="display:none"><b>See Meaning >></b></span><span id="hideHint" style="display:none"><b>Hide Meaning <<</b></span><span id="meaning"></span>
+		</h5>
 		<h2>
 			<span id="blankWord" class="label label-default"></span><br>
-			<h3>
-				<span id="meaning"></span>
-			</h3>
 		</h2>
 		<span id="playarea" style="display:none;">
 			<h3>
@@ -80,25 +88,27 @@ $(document).ready(function() {
 	
 	$("#btnGuessLetter").click(function(e){
 		$("#errorMessage").html('');
-		inputLetter = $("#letter").val().toUpperCase();
-		if(lettersUsed.lastIndexOf(inputLetter) < 0) {
-			lettersUsed.push(inputLetter);
-			cloneOfIndices = indices.slice(0,indices.length);
-			for(i = 0 ; i < cloneOfIndices.length ; i++){
-				if(inputLetter == wordToBeGuessed.word.charAt(cloneOfIndices[i])){
-					guessedWord[cloneOfIndices[i]] = inputLetter;
-					indices.splice(i,1);
+		if(onlyAlphabets()){
+			inputLetter = $("#letter").val().toUpperCase();
+			if(lettersUsed.lastIndexOf(inputLetter) < 0) {
+				lettersUsed.push(inputLetter);
+				cloneOfIndices = indices.slice(0,indices.length);
+				for(i = 0 ; i < cloneOfIndices.length ; i++){
+					if(inputLetter == wordToBeGuessed.word.charAt(cloneOfIndices[i])){
+						guessedWord[cloneOfIndices[i]] = inputLetter;
+						indices.splice(i,1);
+					}
 				}
-			}
-			if(!isGameWon()){
-				if(cloneOfIndices.length == indices.length){
-					noOfAttempts = noOfAttempts - 1;
+				if(!isGameWon()){
+					if(cloneOfIndices.length == indices.length){
+						noOfAttempts = noOfAttempts - 1;
+					}
+					displayGuessedWord(guessedWord);
+					updateNoOfAttempts(noOfAttempts);	
 				}
-				displayGuessedWord(guessedWord);
-				updateNoOfAttempts(noOfAttempts);	
+			} else {
+				displayErrorMessage(inputLetter);
 			}
-		} else {
-			displayErrorMessage(inputLetter);
 		}
 		$("#letter").val('');
 		$("#letter").focus();
@@ -113,10 +123,13 @@ $(document).ready(function() {
 		$("#blankWord").html('');
 		$("#winBlock").attr('style','display:none');
 		$("#loseBlock").attr('style','display:none');
-		$('#meaning').html('<b>Meaning : </b>'+wordToBeGuessed.meaning);
+		$('#meaning').html(wordToBeGuessed.meaning);
 		$("#playarea").attr('style','display:block');
 		$("#guessarea").attr('style','display:block');
 		$("#errorMessage").html('');
+		$("#showHint").attr('style','display:block');
+		$("#hideHint").click();
+		$("#hideRules").click();
 		updateNoOfAttempts(noOfAttempts);
 	}
 	
@@ -137,6 +150,29 @@ $(document).ready(function() {
 	
 });
 
+$("#showHint").click(function(e){
+	$('#meaning').attr('style','display:block');
+	$('#hideHint').attr('style','display:block');
+	$('#showHint').attr('style','display:none');
+}); 
+
+$("#hideHint").click(function(e){
+	$('#meaning').attr('style','display:none');
+	$('#hideHint').attr('style','display:none');
+	$('#showHint').attr('style','display:block');
+}); 
+
+$("#showRules").click(function(e){
+	$('#rules').attr('style','display:block');
+	$('#hideRules').attr('style','display:block');
+	$('#showRules').attr('style','display:none');
+}); 
+
+$("#hideRules").click(function(e){
+	$('#rules').attr('style','display:none');
+	$('#hideRules').attr('style','display:none');
+	$('#showRules').attr('style','display:block');
+}); 
 
 
 function displayErrorMessage(inputLetter){
@@ -171,7 +207,6 @@ function randomizer(){
 function loadWords(){
 	var words = [];
 	jQuery.get('dictionary.json', function(wordDict) {
-		//wordDict = JSON.parse(wordDict);
 		$.each( wordDict, function( key, val ) {
 			var obj = new Object();
 			obj.word = key;
@@ -193,6 +228,16 @@ function loadWords(){
 	});
 	return words;
 	*/
+}
+
+function onlyAlphabets() {
+	var regex = /^[a-zA-Z]*$/;
+	if (regex.test($("#letter").val())) {
+		return true;
+	} else {
+		$("#errorMessage").html("Alphabets Only");
+		return false;
+	}
 }
 
 </script>
