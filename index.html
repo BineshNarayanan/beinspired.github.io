@@ -130,7 +130,7 @@ $(document).ready(function() {
 		$("#showHint").attr('style','display:block');
 		$("#hideHint").click();
 		$("#hideRules").click();
-		$('#noOfAttemptLeft').addClass('label-success');
+		$('#noOfAttemptLeft').removeClass('label-danger').addClass('label-success');
 		updateNoOfAttempts(noOfAttempts);
 	}
 	
