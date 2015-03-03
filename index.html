@@ -10,14 +10,12 @@
 	<div id="header" class="container table-responsive" align="center">
 		<br>
 		<br>
-		<h1>Lets play a game of HANGMAN!!</h1>
+		<h1>Learn english words the PLAY way!</h1>
 		<br>
 		<br>
 		<table>
 			<tr>
-				<td><input class="btn btn-success" type="button" value="Overview" onclick="getOverview()"/></td>
-				<td>&nbsp;</td>
-				<td><input class="btn btn-success" type="button" value="New Game" id="newGame"></input></td>
+				<td><input class="btn btn-success" type="button" value="New Word" id="newGame"></input></td>
 			</tr>
 		</table>
 		<br>
@@ -37,8 +35,8 @@
 		<span id="playarea" style="display:none;">
 			<h3>
 				<span id="guessarea" style="display:none">
-					<input type="text" name="inputLetter" id="inputLetterId" maxlength="1" size="1" autofocus="autofocus" autocomplete="off"></input>
-					<button name="btnGuess" class="btn btn-success" type="button" onclick="guessLetter();">Guess?</button><br><br>
+					<input type="text" name="inputLetter" id="letter" maxlength="1" size="1" autofocus="autofocus" autocomplete="off"></input>
+					<button name="btnGuess" id="btnGuessLetter" class="btn btn-success" type="button">Guess?</button><br><br>
 				</span>
 				<span id="loseBlock" style="display:none">
 					The word was <span id="correctWord" class="label label-info"></span><br><br>
@@ -53,77 +51,147 @@
 				You have <span id="noOfAttemptLeft" class="label label-success"></span> attempts left.
 			</h4>
 			<h4>
-				<span id="errorMessage" class="label label-warning"></span> 
+				<span id="errorMessage" class="label label-danger"></span> 
 			</h4>
 		</span>
 	</div>
-	<div id="overviewBody" class="container table-responsive" align="center" style="display:none;">
-		<table class="table table-bordered">
-			<thead>
-				<tr>
-					<th>Id</th>
-					<th>Word</th>
-					<th>Status</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody id="tblOverviewBody" align="center">
-				
-			</tbody>
-		</table>
-		
-	</div>
-	
 	<input type="hidden" id="gameId" value=""></input>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script>
 $(document).ready(function() {
-	/*$.ajax({
-		url:'http://bineshnarayanan.github.io/dictionary.json',
-		type:'GET',
-		data: '',
-		dataType: 'json',
-		success:function(res){
-			var items = [];
-			$.each( res, function( key, val ) {
-				var obj = new Object();
-				obj.word = key;
-				obj.meaning = val;
-				items.push(obj);
-			});
-			return true;
-		},
-		error:function(res){
-			alert('!_a_success');
-		}
-	});*/
 	
-	words = loadWords()
 	
+	words = loadWords();
+	wordToBeGuessed = '';
+	guessedWord = '';
+	indices = '';
+	noOfAttempts = 0;
+	lettersUsed = '';
 	
 	$("#newGame").click(function(e){
-		wordToBeGuessed = words[randomizer()];
+		init();
 		for(i = 0 ; i < wordToBeGuessed.word.length ; i++){
-			$("#blankWord" ).append(".");
+			guessedWord.push('.');
+			$("#blankWord").append('.');
+			indices.push(i);
 		}
-	//	alert(randomizer());
-	//	alert(words[randomizer()].word);
+	});
+	
+	$("#btnGuessLetter").click(function(e){
+		$("#errorMessage").html('');
+		inputLetter = $("#letter").val().toUpperCase();
+		if(lettersUsed.lastIndexOf(inputLetter) < 0) {
+			lettersUsed.push(inputLetter);
+			cloneOfIndices = indices.slice(0,indices.length);
+			for(i = 0 ; i < cloneOfIndices.length ; i++){
+				if(inputLetter == wordToBeGuessed.word.charAt(cloneOfIndices[i])){
+					guessedWord[cloneOfIndices[i]] = inputLetter;
+					indices.splice(i,1);
+				}
+			}
+			if(!isGameWon()){
+				if(cloneOfIndices.length == indices.length){
+					noOfAttempts = noOfAttempts - 1;
+				}
+				displayGuessedWord(guessedWord);
+				updateNoOfAttempts(noOfAttempts);	
+			}
+		} else {
+			displayErrorMessage(inputLetter);
+		}
+		$("#letter").val('');
+		$("#letter").focus();
+	});
+	
+	function init(){
+		wordToBeGuessed = words[randomizer()];
+		indices = [];
+		guessedWord = [];
+		noOfAttempts = 11;
+		lettersUsed = [];
+		$("#blankWord").html('');
+		$("#winBlock").attr('style','display:none');
+		$("#loseBlock").attr('style','display:none');
 		$('#meaning').html('<b>Meaning : </b>'+wordToBeGuessed.meaning);
 		$("#playarea").attr('style','display:block');
 		$("#guessarea").attr('style','display:block');
-		$("#noOfAttemptLeft").html(11);
-	});
-
+		$("#errorMessage").html('');
+		updateNoOfAttempts(noOfAttempts);
+	}
+	
+	
+	function isGameWon(){
+		guessedWordStr = '';
+		for(i = 0 ; i < guessedWord.length ; i++){
+			guessedWordStr = guessedWordStr.concat(guessedWord[i]);
+		}
+		if(wordToBeGuessed.word.toUpperCase() == guessedWordStr.toUpperCase()){
+			$("#winBlock").attr('style','display:block');
+			$("#guessarea").attr('style','display:none');
+			$("#blankWord").html(wordToBeGuessed.word);
+			return true;
+		}
+		return false;
+	}
 	
 });
+
+
+
+function displayErrorMessage(inputLetter){
+	$("#errorMessage").html("The letter '"+inputLetter+"' has already been used.");
+}
+
+function updateNoOfAttempts(noOfAttempts){
+	if (eval(noOfAttempts) == 0) {
+		$("#noOfAttemptLeft").html(noOfAttempts);
+		$("#loseBlock").attr('style','display:block');
+		$("#correctWord").html(wordToBeGuessed.word);
+		$("#guessarea").attr('style','display:none');
+	} else if(eval(noOfAttempts) < 4 && eval(noOfAttempts) > 0){
+		$("#noOfAttemptLeft").html(noOfAttempts);
+		$('#noOfAttemptLeft').removeClass('label-success').addClass('label-danger');
+	} else if(eval(noOfAttempts) > 4 && eval(noOfAttempts) > 0){
+		$("#noOfAttemptLeft").html(noOfAttempts);
+	} 
+}
+
+function displayGuessedWord(guessedWord){
+	$("#blankWord" ).html('');
+	for(i = 0 ; i < guessedWord.length ; i++){
+		$("#blankWord" ).append(guessedWord[i]);
+	}
+}
 
 function randomizer(){
 	return Math.floor((Math.random() * 1) + 1);
 }
 
 function loadWords(){
+	$.ajax({
+		url:'http://bineshnarayanan.github.io/dictionary.json',
+		type:'GET',
+		data: '',
+		dataType: 'json',
+		success:function(wordDict){
+			wordDict = JSON.parse(wordDict);
+			var words = [];
+			$.each( wordDict, function( key, val ) {
+				var obj = new Object();
+				obj.word = key;
+				obj.meaning = val;
+				words.push(obj);
+			});
+			return words;
+		},
+		error:function(res){
+			alert('!_a_success');
+		}
+	});
+	
+	/*
 	wordDict = "{\"DIPLOBLASTIC\":\"Characterizing the ovum when it has two primary germinallayers.\",\"DEFIGURE\":\"To delineate.These two stones as they are here defigured. Weever.\"}";
 	wordDict = JSON.parse(wordDict);
 	var words = [];
@@ -134,6 +202,7 @@ function loadWords(){
 		words.push(obj);
 	});
 	return words;
+	*/
 }
 
 
