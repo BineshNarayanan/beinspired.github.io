@@ -264,7 +264,7 @@ function loadWordsLocally(){
 function loadWords(level){
 	var words = [];
 	jQuery.get('dictionary.json.'+level, function(wordDict) {
-		$.each( wordDict, function( key, val ) {
+		$.each( JSON.parse(wordDict), function( key, val ) {
 			var obj = new Object();
 			obj.word = key;
 			obj.meaning = val;
