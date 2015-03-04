@@ -17,10 +17,20 @@
 		<br>
 		<h1>Learn english words the PLAY way!</h1>
 		<br>
-		<br>
 		<table>
 			<tr>
-				<td><input class="btn btn-success" type="button" value="New Word" id="newGame"></input></td>
+				<td align="center" style="padding:10px;">
+					<input name="gamelevel" id="level_1" value="1" type="radio" checked="true">&nbsp;Easy
+				</td>
+				<td align="center" style="padding:10px;">
+					<input name="gamelevel" id="level_2" value="3" type="radio">&nbsp;Average
+				</td>
+				<td align="center" style="padding:10px;">
+					<input name="gamelevel" id="level_3" value="3" type="radio">&nbsp;Tough
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3" align="center"><input class="btn btn-success" type="button" value="New Word" id="newGame"></input></td>
 			</tr>
 		</table>
 		<br>
@@ -73,9 +83,11 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script>
+var words = '';
 $(document).ready(function() {
 	
-	words = loadWords();
+	//words = loadWordsLocally();
+	words = loadWords($("#level_1").val());
 	wordToBeGuessed = '';
 	guessedWord = '';
 	indices = '';
@@ -127,7 +139,8 @@ $(document).ready(function() {
 	});
 	
 	function init(){
-		wordToBeGuessed = words[randomizer()];
+		//wordToBeGuessed = words[randomizer()];
+		wordToBeGuessed = words[0];
 		indices = [];
 		guessedWord = [];
 		noOfAttempts = 11;
@@ -161,7 +174,24 @@ $(document).ready(function() {
 		return false;
 	}
 	
+	$("#level_1").click(function(e){
+		words = loadWords($("#level_1").val());
+		//words = loadWordsLocally();
+	});
+	
+	$("#level_2").click(function(e){
+		words = loadWords($("#level_2").val());
+		//words = loadWordsLocally();
+	});
+	
+	$("#level_3").click(function(e){
+		words = loadWords($("#level_3").val());
+		//words = loadWordsLocally();
+	});
+	
 });
+
+
 
 $("#showHint").click(function(e){
 	$('#meaning').attr('style','display:block');
@@ -211,7 +241,11 @@ function displayGuessedWord(guessedWord){
 }
 
 function randomizer(){
-	return Math.floor((Math.random() * 5000) + 1);
+	if ($('#level_1').is(':checked')){
+		return Math.floor((Math.random() * 51) + 1);
+	else{
+		return Math.floor((Math.random() * 4997) + 1);
+	}
 }
 
 function loadWordsLocally(){
@@ -227,9 +261,9 @@ function loadWordsLocally(){
 	return words;
 }
 
-function loadWords(){
+function loadWords(level){
 	var words = [];
-	jQuery.get('dictionary.json', function(wordDict) {
+	jQuery.get('dictionary.json.'+level, function(wordDict) {
 		$.each( wordDict, function( key, val ) {
 			var obj = new Object();
 			obj.word = key;
