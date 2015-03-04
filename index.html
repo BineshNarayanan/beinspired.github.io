@@ -5,6 +5,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Lets Play</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		.pointer{
+			cursor:pointer;
+		}
+	</style>
 </head>
 <body>
 	<div id="header" class="container table-responsive" align="center">
@@ -21,7 +26,7 @@
 		<br>
 		<br>
 		<h5>
-			<span id="showRules" style="display:block"><b>See Rules >></b></span><span id="hideRules" style="display:none"><b>Hide Rules <<</b></span>
+			<span id="showRules" class="pointer" style="display:block"><b>See Rules >></b></span><span class="pointer" id="hideRules" style="display:none"><b>Hide Rules <<</b></span>
 			<span id="rules" style="display:none">
 				@ Guess the word by guessing one letter at a time.<br>
 				@ A successful attempt wouldnt reduce the number of attempts.<br>
@@ -35,7 +40,7 @@
 		</h2>
 		<br>
 		<h5>
-			<span id="showHint" style="display:none"><b>See Meaning >></b></span><span id="hideHint" style="display:none"><b>Hide Meaning <<</b></span><span id="meaning"></span>
+			<span id="showHint" class="pointer" style="display:none;"><b>See Meaning >></b></span><span class="pointer" id="hideHint" style="display:none;"><b>Hide Meaning <<</b></span><span id="meaning"></span>
 		</h5>
 		<h2>
 			<span id="blankWord" class="label label-default"></span><br>
@@ -80,8 +85,16 @@ $(document).ready(function() {
 	$("#newGame").click(function(e){
 		init();
 		for(i = 0 ; i < wordToBeGuessed.word.length ; i++){
-			guessedWord.push('.');
-			$("#blankWord").append('.');
+			if(wordToBeGuessed.word.charAt(i) == ' '){
+				guessedWord.push(' ');	
+				$("#blankWord").append(' ');
+			} else if(wordToBeGuessed.word.charAt(i) == '-'){
+				guessedWord.push('-');
+				$("#blankWord").append('-');
+			} else {
+				guessedWord.push('.');
+				$("#blankWord").append('.');
+			}
 		}
 	});
 	
@@ -201,6 +214,19 @@ function randomizer(){
 	return Math.floor((Math.random() * 5000) + 1);
 }
 
+function loadWordsLocally(){
+	wordDict = "{\"SEA-DRAKE\":\"The pewit gull.\",\"DEFIGURE\":\"To delineate.These two stones as they are here defigured. Weever.\",\"PECULIARIZE\":\"To make peculiar; to set appart or assign, as an exclusivepossession. [R.] Dr. John Smith.\"}";
+	wordDict = JSON.parse(wordDict);
+	var words = [];
+	$.each( wordDict, function( key, val ) {
+		var obj = new Object();
+		obj.word = key;
+		obj.meaning = val;
+		words.push(obj);
+	});
+	return words;
+}
+
 function loadWords(){
 	var words = [];
 	jQuery.get('dictionary.json', function(wordDict) {
@@ -212,23 +238,10 @@ function loadWords(){
 		});
 	});
 	return words;
-	
-	/*
-	wordDict = "{\"DIPLOBLASTIC\":\"Characterizing the ovum when it has two primary germinallayers.\",\"DEFIGURE\":\"To delineate.These two stones as they are here defigured. Weever.\",\"PECULIARIZE\":\"To make peculiar; to set appart or assign, as an exclusivepossession. [R.] Dr. John Smith.\"}";
-	wordDict = JSON.parse(wordDict);
-	var words = [];
-	$.each( wordDict, function( key, val ) {
-		var obj = new Object();
-		obj.word = key;
-		obj.meaning = val;
-		words.push(obj);
-	});
-	return words;
-	*/
 }
 
 function onlyAlphabets() {
-	var regex = /^[a-zA-Z\s]*$/;
+	var regex = /^[a-zA-Z]*$/;
 	if (regex.test($("#letter").val())) {
 		return true;
 	} else {
