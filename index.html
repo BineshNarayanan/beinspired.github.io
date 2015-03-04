@@ -176,19 +176,22 @@ $(document).ready(function() {
 	
 	$("#level_1").click(function(e){
 		words = loadWords($("#level_1").val());
-		$("#newGame").click();
+		$("#blankWord").html('');
+		$("#playarea").attr('style','display:none');
 		//words = loadWordsLocally();
 	});
 	
 	$("#level_2").click(function(e){
 		words = loadWords($("#level_2").val());
-		$("#newGame").click();
+		$("#blankWord").html('');
+		$("#playarea").attr('style','display:none');
 		//words = loadWordsLocally();
 	});
 	
 	$("#level_3").click(function(e){
 		words = loadWords($("#level_3").val());
-		$("#newGame").click();
+		$("#blankWord").html('');
+		$("#playarea").attr('style','display:none');
 		//words = loadWordsLocally();
 	});
 	
