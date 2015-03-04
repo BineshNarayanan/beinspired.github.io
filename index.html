@@ -82,7 +82,6 @@ $(document).ready(function() {
 		for(i = 0 ; i < wordToBeGuessed.word.length ; i++){
 			guessedWord.push('.');
 			$("#blankWord").append('.');
-			indices.push(i);
 		}
 	});
 	
@@ -92,15 +91,15 @@ $(document).ready(function() {
 			inputLetter = $("#letter").val().toUpperCase();
 			if(lettersUsed.lastIndexOf(inputLetter) < 0) {
 				lettersUsed.push(inputLetter);
-				cloneOfIndices = indices.slice(0,indices.length);
-				for(i = 0 ; i < cloneOfIndices.length ; i++){
-					if(inputLetter == wordToBeGuessed.word.charAt(cloneOfIndices[i])){
-						guessedWord[cloneOfIndices[i]] = inputLetter;
-						indices.splice(i,1);
+				isSuccessfulAttempt = false;
+				for(i = 0 ; i < wordToBeGuessed.word.length ; i++){
+					if(inputLetter == wordToBeGuessed.word.charAt(i)){
+						guessedWord[i] = inputLetter;
+						isSuccessfulAttempt = true;
 					}
 				}
 				if(!isGameWon()){
-					if(cloneOfIndices.length == indices.length){
+					if(!isSuccessfulAttempt){
 						noOfAttempts = noOfAttempts - 1;
 					}
 					displayGuessedWord(guessedWord);
@@ -192,7 +191,7 @@ function updateNoOfAttempts(noOfAttempts){
 }
 
 function displayGuessedWord(guessedWord){
-	$("#blankWord" ).html('');
+	$("#blankWord").html('');
 	for(i = 0 ; i < guessedWord.length ; i++){
 		$("#blankWord" ).append(guessedWord[i]);
 	}
@@ -215,7 +214,7 @@ function loadWords(){
 	return words;
 	
 	/*
-	wordDict = "{\"DIPLOBLASTIC\":\"Characterizing the ovum when it has two primary germinallayers.\",\"DEFIGURE\":\"To delineate.These two stones as they are here defigured. Weever.\"}";
+	wordDict = "{\"DIPLOBLASTIC\":\"Characterizing the ovum when it has two primary germinallayers.\",\"DEFIGURE\":\"To delineate.These two stones as they are here defigured. Weever.\",\"PECULIARIZE\":\"To make peculiar; to set appart or assign, as an exclusivepossession. [R.] Dr. John Smith.\"}";
 	wordDict = JSON.parse(wordDict);
 	var words = [];
 	$.each( wordDict, function( key, val ) {
