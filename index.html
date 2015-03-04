@@ -182,16 +182,13 @@ function displayErrorMessage(inputLetter){
 
 function updateNoOfAttempts(noOfAttempts){
 	if (eval(noOfAttempts) == 0) {
-		$("#noOfAttemptLeft").html(noOfAttempts);
-		$("#loseBlock").attr('style','display:block');
 		$("#correctWord").html(wordToBeGuessed.word);
+		$("#loseBlock").attr('style','display:block');
 		$("#guessarea").attr('style','display:none');
 	} else if(eval(noOfAttempts) < 4 && eval(noOfAttempts) > 0){
-		$("#noOfAttemptLeft").html(noOfAttempts);
 		$('#noOfAttemptLeft').removeClass('label-success').addClass('label-danger');
-	} else if(eval(noOfAttempts) => 4 && eval(noOfAttempts) > 0){
-		$("#noOfAttemptLeft").html(noOfAttempts);
-	} 
+	}
+	$("#noOfAttemptLeft").html(noOfAttempts);
 }
 
 function displayGuessedWord(guessedWord){
