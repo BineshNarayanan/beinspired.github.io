@@ -20,21 +20,25 @@
 		<table>
 			<tr>
 				<td align="center" style="padding:10px;">
-					<input name="gamelevel" id="level_1" value="1" type="radio" checked="true">&nbsp;Easy
+					<input class="level" name="gamelevel" id="level_1" value="1" type="radio" checked="true">&nbsp;Easy
 				</td>
 				<td align="center" style="padding:10px;">
-					<input name="gamelevel" id="level_2" value="3" type="radio">&nbsp;Average
+					<input class="level" name="gamelevel" id="level_2" value="2" type="radio">&nbsp;Average
 				</td>
 				<td align="center" style="padding:10px;">
-					<input name="gamelevel" id="level_3" value="3" type="radio">&nbsp;Tough
+					<input class="level" name="gamelevel" id="level_3" value="3" type="radio">&nbsp;Tough
 				</td>
 			</tr>
 			<tr>
-				<td colspan="3" align="center"><input class="btn btn-success" type="button" value="New Word" id="newGame"></input></td>
+				<td colspan="3" align="center">
+					<input class="btn btn-success" type="button" value="New Word" id="newGame"></input>&nbsp;
+					<input class="btn btn-primary" type="button" value="SCORES" id="scores"></input></td>
 			</tr>
 		</table>
 		<br>
 		<br>
+	</div>
+	<div id="body" class="container" align="center" style="display:block;">
 		<h5>
 			<span id="showRules" class="pointer" style="display:block"><b>See Rules >></b></span><span class="pointer" id="hideRules" style="display:none"><b>Hide Rules <<</b></span>
 			<span id="rules" style="display:none">
@@ -43,14 +47,16 @@
 				@ You get 11 attempts to guess.
 			</span>
 		</h5>
-	</div>
-	<div id="body" class="container" align="center" style="display:block;">
 		<h2>
 			Guess the WORD!!
 		</h2>
 		<br>
 		<h5>
-			<span id="showHint" class="pointer" style="display:none;"><b>See Meaning >></b></span><span class="pointer" id="hideHint" style="display:none;"><b>Hide Meaning <<</b></span><span id="meaning"></span>
+			<span id="meaningarea" style="display:block">
+				<span id="showHint" class="pointer" style="display:none;"><b>See Meaning >></b></span>
+				<span class="pointer" id="hideHint" style="display:none;"><b>Hide Meaning <<</b></span>
+				<span id="meaning"></span>
+			</span>
 		</h5>
 		<h2>
 			<span id="blankWord" class="label label-default"></span><br>
@@ -67,7 +73,9 @@
 				</span>
 				<span id="winBlock" style="display:none">
 					<br>
-					You <span class="label label-primary">WIN</span><br><br>
+					You <span class="label label-primary">WIN</span>
+					<br><br>
+					You score <span class="label label-primary" id="score"></span> points.
 				</span>
 			</h3>				
 			<h4>
@@ -78,29 +86,58 @@
 			</h4>
 		</span>
 	</div>
+	<div class="container table-responsive" align="center" id="scoreBoard" style="display:none;">
+		<table class="table table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>Level</th>
+					<th>Word</th>
+					<th>Score</th>
+				</tr>
+			</thead>
+			<tbody id="scoreBoardTableBody">
+				<tr>
+					<td>1</td>
+					<td>Test</td>
+					<td>10</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 	<input type="hidden" id="gameId" value=""></input>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="dictionary.json.1"></script>
+<script type="text/javascript" language="javascript" src="dictionary.json.2"></script>
+<script type="text/javascript" language="javascript" src="dictionary.json.3"></script>
 <script>
 var words = '';
+var dictionary = '';
+var dictionarySize = [109,2931,1998];
+var attemptsMaster = [11,9,7];
+var levelMaster = ['Easy','Average','Tough'];
+var id = 0;
 $(document).ready(function() {
-	
-	//words = loadWordsLocally();
 	words = loadWords($("#level_1").val());
 	wordToBeGuessed = '';
 	guessedWord = '';
 	indices = '';
-	noOfAttempts = 0;
 	lettersUsed = '';
+	isSuccessfulAttempt = false;
+	noOfAttempts = attemptsMaster[$(".level:checked").val()-1];
+	getMaxId();
+	$("#newGame").focus();
 	
 	$("#newGame").click(function(e){
+		$("#scoreBoard").attr('style','display:none');
+		$("#body").attr('style','display:block');
 		init();
 		for(i = 0 ; i < wordToBeGuessed.word.length ; i++){
-			if(wordToBeGuessed.word.charAt(i) == ' '){
+			if (wordToBeGuessed.word.charAt(i) == ' ') {
 				guessedWord.push(' ');	
 				$("#blankWord").append(' ');
-			} else if(wordToBeGuessed.word.charAt(i) == '-'){
+			} else if (wordToBeGuessed.word.charAt(i) == '-') {
 				guessedWord.push('-');
 				$("#blankWord").append('-');
 			} else {
@@ -110,9 +147,79 @@ $(document).ready(function() {
 		}
 	});
 	
+	$(document).on("keypress", "#letter", function(e) {
+		if (e.which == 13) {
+			$("#btnGuessLetter").click();
+		}
+	});
+	
 	$("#btnGuessLetter").click(function(e){
 		$("#errorMessage").html('');
-		if(onlyAlphabets()){
+		fillMatchingLetter();
+		attemptsLeftCalculation();
+		updateAttemptsLeft();
+		displayGuessedWord();
+		isGameOver = evalAndUpdateGameStatus();
+		if(isGameOver){
+			id = id + 1;
+			score = calculateScore($(".level:checked").val(),noOfAttempts);
+			$("#score").html(score);
+			insertScore(id,$(".level:checked").val(),wordToBeGuessed.word,score);
+		}
+		$("#letter").val('');
+		$("#letter").focus();
+	});
+	
+	function evalAndUpdateGameStatus(){
+		guessedWordStr = '';
+		for(i = 0 ; i < guessedWord.length ; i++){
+			guessedWordStr = guessedWordStr.concat(guessedWord[i]);
+		}
+		
+		if(wordToBeGuessed.word.toUpperCase() == guessedWordStr.toUpperCase()){
+			$("#blankWord").html(wordToBeGuessed.word);
+			$("#winBlock").attr('style','display:block');
+			$("#guessarea").attr('style','display:none');
+			return true;
+		}
+		
+		if (eval(noOfAttempts) == 0) {
+			$("#correctWord").html(wordToBeGuessed.word);
+			$("#loseBlock").attr('style','display:block');
+			$("#guessarea").attr('style','display:none');
+			return true;
+		}
+		
+		return false;
+	}
+	
+	function attemptsLeftCalculation(){
+		if(!isSuccessfulAttempt){
+			noOfAttempts = noOfAttempts - 1;
+		}
+		return noOfAttempts;
+	}
+	
+	function fillMatchingLetter(){
+		if(onlyAlphabets($("#letter").val())){
+			inputLetter = $("#letter").val().toUpperCase();
+			if(lettersUsed.lastIndexOf(inputLetter) < 0) {
+				lettersUsed.push(inputLetter);
+				isSuccessfulAttempt = false;
+				for(i = 0 ; i < wordToBeGuessed.word.length ; i++){
+					if(inputLetter == wordToBeGuessed.word.charAt(i)){
+						guessedWord[i] = inputLetter;
+						isSuccessfulAttempt = true;
+					}
+				}
+			} else {
+				displayErrorMessage(inputLetter);
+			}
+		}
+	}
+	
+	function fillLetter(){
+		if(onlyAlphabets($("#letter").val())){
 			inputLetter = $("#letter").val().toUpperCase();
 			if(lettersUsed.lastIndexOf(inputLetter) < 0) {
 				lettersUsed.push(inputLetter);
@@ -134,16 +241,19 @@ $(document).ready(function() {
 				displayErrorMessage(inputLetter);
 			}
 		}
-		$("#letter").val('');
-		$("#letter").focus();
-	});
+	}
 	
 	function init(){
-		wordToBeGuessed = words[randomizer()];
+		index = randomizer();
+		console.log(index);
+		wordToBeGuessed = words[index];
+		console.log(wordToBeGuessed);
 		//wordToBeGuessed = words[0];
 		indices = [];
 		guessedWord = [];
-		noOfAttempts = 11;
+		var level = $(".level:checked");
+		noOfAttempts = attemptsMaster[level.val()-1]
+		updateNoOfAttempts(attemptsMaster[level.val()-1]);
 		lettersUsed = [];
 		$("#blankWord").html('');
 		$("#winBlock").attr('style','display:none');
@@ -156,7 +266,6 @@ $(document).ready(function() {
 		$("#hideHint").click();
 		$("#hideRules").click();
 		$('#noOfAttemptLeft').removeClass('label-danger').addClass('label-success');
-		updateNoOfAttempts(noOfAttempts);
 	}
 	
 	
@@ -173,37 +282,118 @@ $(document).ready(function() {
 		}
 		return false;
 	}
-	
-	$("#level_1").click(function(e){
-		words = loadWords($("#level_1").val());
+
+	$(".level").click(function(e){
+		words = loadWords($(this).val());
+		updateNoOfAttempts(attemptsMaster[$(this).val()-1]);
 		$("#blankWord").html('');
 		$("#playarea").attr('style','display:none');
 		$("#showHint").attr('style','display:none');
+		$("#hideHint").attr('style','display:none');
 		$('#meaning').html('');
-		//words = loadWordsLocally();
+		displayMeaning();
 	});
 	
-	$("#level_2").click(function(e){
-		words = loadWords($("#level_2").val());
-		$("#blankWord").html('');
-		$("#playarea").attr('style','display:none');
-		$("#showHint").attr('style','display:none');
-		$('#meaning').html('');
-		//words = loadWordsLocally();
-	});
+	function displayMeaning(){
+		var level = $(".level:checked");
+		if(level.val() > 2){
+			$("#meaningarea").attr('style','display:none');
+		} else {
+			$("#meaningarea").attr('style','display:block');
+		}
+	}
 	
-	$("#level_3").click(function(e){
-		words = loadWords($("#level_3").val());
+	function updateAttemptsLeft(){
+		if(eval(noOfAttempts) < 4 && eval(noOfAttempts) > 0){
+			$('#noOfAttemptLeft').removeClass('label-success').addClass('label-danger');
+		}
+		$("#noOfAttemptLeft").html(noOfAttempts);
+	};
+	
+	function updateNoOfAttempts(noOfAttempts){
+		if (eval(noOfAttempts) == 0) {
+			$("#correctWord").html(wordToBeGuessed.word);
+			$("#loseBlock").attr('style','display:block');
+			$("#guessarea").attr('style','display:none');
+		} else if(eval(noOfAttempts) < 4 && eval(noOfAttempts) > 0){
+			$('#noOfAttemptLeft').removeClass('label-success').addClass('label-danger');
+		}
+		$("#noOfAttemptLeft").html(noOfAttempts);
+	}
+
+	function displayGuessedWord(){
 		$("#blankWord").html('');
-		$("#playarea").attr('style','display:none');
-		$("#showHint").attr('style','display:none');
-		$('#meaning').html('');
-		//words = loadWordsLocally();
-	});
+		for(i = 0 ; i < guessedWord.length ; i++){
+			$("#blankWord" ).append(guessedWord[i]);
+		}
+	}
 	
 });
 
+$("#scores").click(function(e){
+	$("#scoreBoard").attr('style','display:block');
+	$("#body").attr('style','display:none');
+	if(checkIfWebStorageAvailable()) {
+		var db = openDatabase('GUESSGAME', '1.0', 'Scores Of Games', 2 * 1024 * 1024);
+		db.transaction(function (tx) {
+			tx.executeSql('SELECT level, word, score FROM SCORES', [], function (tx, results) {
+				$("#scoreBoardTableBody").html('');
+				var len = results.rows.length;
+				for(i = 0 ; i < len ; i++){
+					var row = $("<tr/>");
+					rowData = results.rows.item(i);
+					row.append($("<td>" + levelMaster[rowData.level-1] + "</td>"));
+					row.append($("<td>" + rowData.word + "</td>"));
+					row.append($("<td>" + rowData.score + "</td>"));	
+					$("#scoreBoardTableBody").append(row);
+				}
+				
+			}, null);
+		});
+	}
+});
 
+function checkIfWebStorageAvailable(){
+	if(typeof(Storage) != "undefined") {
+		return true;
+	} else {
+		alert('Web Storage not available!');
+		return false;
+	}
+}
+
+function getMaxId(){
+	if(checkIfWebStorageAvailable()) {
+		var db = openDatabase('GUESSGAME', '1.0', 'Scores Of Games', 2 * 1024 * 1024);
+		db.transaction(function (tx) {
+			tx.executeSql('SELECT MAX(id) as id FROM SCORES', [], function (tx, results) {
+				var len = results.rows.length;
+				if(eval(len) > 0){
+					id = results.rows.item(0).id;
+					return id;
+				} else {
+					alert(len);
+				}
+			}, null);
+		});
+	}
+	return 0;
+}
+
+function calculateScore(level,noOfAttemptsLeft){
+	score = (noOfAttemptsLeft / attemptsMaster[level-1]) * 10;
+	return Math.floor(score);
+}
+
+function insertScore(id, level, word, score){
+	if(checkIfWebStorageAvailable()) {
+		var db = openDatabase('GUESSGAME', '1.0', 'Scores Of Games', 2 * 1024 * 1024);
+		db.transaction(function (tx) {  
+		  tx.executeSql('CREATE TABLE IF NOT EXISTS SCORES (id unique, level, word, score)');
+		  tx.executeSql('INSERT INTO SCORES (id, level, word, score) VALUES (?, ?, ?, ?)', [id,level,word,score]);
+		});
+	}
+}
 
 $("#showHint").click(function(e){
 	$('#meaning').attr('style','display:block');
@@ -234,29 +424,13 @@ function displayErrorMessage(inputLetter){
 	$("#errorMessage").html("The letter '"+inputLetter+"' has already been used.");
 }
 
-function updateNoOfAttempts(noOfAttempts){
-	if (eval(noOfAttempts) == 0) {
-		$("#correctWord").html(wordToBeGuessed.word);
-		$("#loseBlock").attr('style','display:block');
-		$("#guessarea").attr('style','display:none');
-	} else if(eval(noOfAttempts) < 4 && eval(noOfAttempts) > 0){
-		$('#noOfAttemptLeft').removeClass('label-success').addClass('label-danger');
-	}
-	$("#noOfAttemptLeft").html(noOfAttempts);
-}
-
-function displayGuessedWord(guessedWord){
-	$("#blankWord").html('');
-	for(i = 0 ; i < guessedWord.length ; i++){
-		$("#blankWord" ).append(guessedWord[i]);
-	}
-}
-
 function randomizer(){
 	if ($('#level_1').is(':checked')){
-		return Math.floor((Math.random() * 51) + 1);
-	}else{
-		return Math.floor((Math.random() * 4997) + 1);
+		return Math.floor((Math.random() * dictionarySize[0]) + 1);
+	}else if ($('#level_2').is(':checked')){
+		return Math.floor((Math.random() * dictionarySize[1]) + 1);
+	} else {
+		return Math.floor((Math.random() * dictionarySize[2]) + 1);
 	}
 }
 
@@ -273,9 +447,9 @@ function loadWordsLocally(){
 	return words;
 }
 
-function loadWords(level){
+/*function loadWords(level){
 	var words = [];
-	jQuery.get('dictionary.json.'+level, function(wordDict) {
+	$.getJSON('dictionary.json.'+level, function(wordDict) {
 		$.each( JSON.parse(wordDict), function( key, val ) {
 			var obj = new Object();
 			obj.word = key;
@@ -284,11 +458,39 @@ function loadWords(level){
 		});
 	});
 	return words;
+}*/
+
+function loadWords(level){
+	var words = [];
+	dictionary = dictionary_level_1;
+	if(level == '1'){
+		dictionary = dictionary_level_1;
+	} else if(level == '2') {
+		dictionary = dictionary_level_2;
+	} else if(level == '3') {
+		dictionary = dictionary_level_3;
+	}
+	$.each(dictionary, function( key, val ) {
+		var obj = new Object();
+		obj.word = key;
+		obj.meaning = val;
+		words.push(obj);
+	});
+	return words;
 }
 
-function onlyAlphabets() {
+function isEmpty(input){
+	if(input == ''){
+		$("#errorMessage").html("Input cannot be blank");
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function onlyAlphabets(input) {
 	var regex = /^[a-zA-Z]*$/;
-	if (regex.test($("#letter").val())) {
+	if (!isEmpty(input) && regex.test(input)) {
 		return true;
 	} else {
 		$("#errorMessage").html("Alphabets Only");
