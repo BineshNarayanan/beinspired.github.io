@@ -17,6 +17,8 @@
 		<br>
 		<h1>Learn english words the PLAY way!</h1>
 		<br>
+		<input name="percentage" id="percentage" type="hidden">
+
 		<table>
 			<tr>
 				<td align="center" style="padding:10px;">
@@ -89,6 +91,7 @@
 		</span>
 	</div>
 	<div class="container table-responsive" align="center" id="scoreBoard" style="display:none;">
+			<span id="scoreBoardPercentageBody"></span>
 		<table class="table table-bordered table-hover">
 			<thead>
 				<tr>
@@ -115,6 +118,8 @@ var dictionarySize = [109,2931,1998];
 var attemptsMaster = [11,9,7];
 var levelMaster = ['Easy','Average','Tough'];
 var id = 0;
+var totalAttempts = 0;
+var successAttempts = 0;
 $(document).ready(function() {
 	words = loadWords($("#level_1").val());
 	wordToBeGuessed = '';
@@ -346,23 +351,39 @@ $(document).ready(function() {
 $("#scores").click(function(e){
 	$("#scoreBoard").attr('style','display:block');
 	$("#body").attr('style','display:none');
+	var strikeRate=0;
 	if(checkIfWebStorageAvailable()) {
+		successAttempts = 0;
+		totalAttempts = 0;
 		var db = openDatabase('GUESSGAME', '1.0', 'Scores Of Games', 2 * 1024 * 1024);
 		db.transaction(function (tx) {
 			tx.executeSql('SELECT level, word, score FROM SCORES', [], function (tx, results) {
 				$("#scoreBoardTableBody").html('');
 				var len = results.rows.length;
+				totalAttempts = len;
 				for(i = 0 ; i < len ; i++){
 					var row = $("<tr/>");
 					rowData = results.rows.item(i);
 					row.append($("<td>" + levelMaster[rowData.level-1] + "</td>"));
 					row.append($("<td>" + rowData.word + "</td>"));
-					row.append($("<td>" + rowData.score + "</td>"));	
+					row.append($("<td>" + rowData.score + "</td>"));
+					if(rowData.score>0){
+						successAttempts++;	
+					}
+
 					$("#scoreBoardTableBody").append(row);
+					strikeRate=((successAttempts/totalAttempts)*100);
 				}
+					$("#scoreBoardPercentageBody").html('');
+					var row1 = $("<tr/>");
+					row1.append($("<td colspan=2></td>"));
+					row1.append($("<td>Success Percentage "+ strikeRate +"%</td>"));		
+					$("#scoreBoardPercentageBody").append(row1);
 				
 			}, null);
 		});
+		
+		
 	}
 });
 
