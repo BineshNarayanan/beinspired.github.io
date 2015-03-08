@@ -3,62 +3,187 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Lets Play</title>
+	<title>Let's Play</title>
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
 	<style>
+		@brand-primary: darken(#428bca, 6.5%); // #337ab7
+		@brand-success: #5cb85c;
+		@brand-info:    #5bc0de;
+		@brand-warning: #f0ad4e;
+		@brand-danger:  #d9534f;
+		
+		.custom-success {
+			background-color: #337ab7;
+		}
+		
+		.custom-primary {
+			background-color: #337ab7;
+		}
+		
+		.custom-info {
+			background-color: #5bc0de;
+		}
+		
+		.custom-warning {
+			background-color: #f0ad4e;
+		}
+		
+		.custom-danger {
+			background-color: #d9534f;
+		}
+		
+		.box{
+			opacity: 0.8;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			background: #505060;
+			border-radius: 1px;
+			box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.2);
+			margin: -16px 0 0 -16px;
+			width: 32px;
+			height: 32px;
+			z-index: 2;
+		}
+	
 		.pointer{
 			cursor:pointer;
+		}
+		.input-text-box {
+			vertical-align:middle;
+			background-color: #fff;
+			background-image: none;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-shadow:0 0 1px 1px;
+		}
+		.btn-circle {
+			width: 30px;
+			height: 30px;
+			text-align: center;
+			padding: 6px 0;
+			font-size: 12px;
+			line-height: 1.428571429;
+			border-radius: 15px;
+		}
+		.btn-circle.btn-lg {
+			width: 50px;
+			height: 50px;
+			padding: 10px 16px;
+			font-size: 18px;
+			line-height: 1.33;
+			border-radius: 25px;
+		}
+		.btn-circle.btn-xl {
+			width: 70px;
+			height: 70px;
+			padding: 10px 16px;
+			font-size: 24px;
+			line-height: 1.33;
+			border-radius: 35px;
+		}
+		
+		.custom-div{
+			height:35px;
+			width:35px;
+			margin:0px 0px 0px 2px;
+			border-radius: 5px;
+			line-height: 2;
+			color: white;
+			padding: 2px 0px 2px 0px;
+			float:left;
 		}
 	</style>
 </head>
 <body>
-	<div id="header" class="container table-responsive" align="center">
-		<br>
-		<br>
-		<h1>Learn english words the PLAY way!</h1>
-		<br>
+	<div id="header" class="container" align="center" style="border:0px red solid;">
+		<div class="row">
+			<div class="col-lg-12" style="border-radius:5px;background-color:lightgreen;color:beige;">
+				<h1>SPELL-BOUND</h1>
+			</div>
+		</div>
+		
 		<table>
 			<tr>
 				<td align="center" style="padding:10px;">
-					<input class="level" name="gamelevel" id="level_1" value="1" type="radio" checked="true">&nbsp;Easy
+					<input class="level" name="gamelevel" id="level_1" value="1" type="radio" checked="true">&nbsp;<span class="label label-primary">Easy</span>
 				</td>
 				<td align="center" style="padding:10px;">
-					<input class="level" name="gamelevel" id="level_2" value="2" type="radio">&nbsp;Average
+					<input class="level" name="gamelevel" id="level_2" value="2" type="radio">&nbsp;<span class="label label-info">Average</span>
 				</td>
 				<td align="center" style="padding:10px;">
-					<input class="level" name="gamelevel" id="level_3" value="3" type="radio">&nbsp;Tough
+					<input class="level" name="gamelevel" id="level_3" value="3" type="radio">&nbsp;<span class="label label-danger">Tough</span>
 				</td>
 			</tr>
+			<tr><td>&nbsp;</td></tr>
 			<tr>
 				<td colspan="3" align="center">
-					<input class="btn btn-success" type="button" value="New Word" id="newGame"></input>&nbsp;
-					<input class="btn btn-primary" type="button" value="SCORES" id="scores"></input></td>
+					<button type="button" class="btn btn-info btn-circle btn-lg glyphicon glyphicon-play" id="newGame" title="New Word"></button>&nbsp;
+					<button type="button" class="btn btn-primary btn-circle btn-lg glyphicon glyphicon-list" id="scores" title="Scores"></button>&nbsp;
+					<button type="button" class="btn btn-warning btn-circle btn-lg glyphicon glyphicon-info-sign" id="info" title="Info"></button>&nbsp;
+				</td>
+			</tr>
+			<!--
+			<tr><td>&nbsp;</td></tr>
+			<tr>
+				<td colspan="3" align="center">
+					<button type="button" class="btn btn-success" id="noOfAttemptLeft" title="Attempts"></button>
+					<button type="button" class="btn btn-warning" id="score" title="Score">0</button>
+					<button type="button" class="btn btn-primary" id="hint" title="Hint">?</button>
+				</td>
+			</tr>
+			-->
+			<tr><td>&nbsp;</td></tr>
+			<tr id="infoArea" style="display:none;">
+				<td colspan="3" align="center" style="border:0px solid red;padding-left:78px;">
+					<div class="custom-div custom-primary" id="noOfAttemptLeft" title="Attempts">11</div>
+					<div class="custom-div custom-warning" id="score" title="Score">0</div>
+					<div class="custom-div custom-info" id="hint" title="Hint">?</div>
+				</td>
 			</tr>
 		</table>
-		<br>
-		<br>
+		<!--
+		<div class="row" style="border:1px solid red">
+			<div class="col-lg-5" style="border:0px solid blue"></div>
+			<div class="col-lg-6">
+				<div class="row">
+					<div class="col-md-2" style="background-color: #5cb85c;border-radius: 5px;line-height: 2;color: white;padding: 2px 0px 2px 0px;">
+					</div>
+					<div class="col-md-2" style="background-color: #f0ad4e;border-radius: 5px;line-height: 2;color: white;padding: 2px 0px 2px 0px;;">
+					</div>
+					<div class="col-md-2" style="background-color: #f0ad4e;border-radius: 5px;line-height: 2;color: white;padding: 2px 0px 2px 0px;;">
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3" style="border:0px solid blue"></div>
+		</div>
+		-->
+		<div class="row">
+			<div style="border:0px solid blue;" class="col-lg-2">&nbsp;</div>
+			<div style="border:0px solid blue;" class="col-lg-8">
+				<span id="rules" style="display:none">
+					<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>Guess the word one letter at a time.</span><br>
+					<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>A correct guess wouldnt reduce the number of chances.</span><br>
+					<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>You get 11, 9, 7 chances in Easy, Average and Tough level respectively.</span><br>
+					<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>At level Tough, meaning of the word would not be displayed.</span><br>
+					<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>You will get a maximum of 10 points for a WIN.</span>
+				</span>
+			</div>
+			<div style="border:0px solid blue;" class="col-lg-2">&nbsp;</div>
+		</div>
 	</div>
-	<div id="body" class="container" align="center" style="display:block;">
+	<div id="body" class="container" align="center" style="display:block;border:0px red solid;">
 		<h5>
-			<span id="showRules" class="pointer" style="display:block"><b>See Rules >></b></span><span class="pointer" id="hideRules" style="display:none"><b>Hide Rules <<</b></span>
-			<span id="rules" style="display:none">
-				@ Guess the word by guessing one letter at a time.<br>
-				@ A successful attempt wouldnt reduce the number of attempts.<br>
-				@ You get 11, 9, 7 attempts in Easy, Average and Tough level respectively.<br>
-				@ At level Tough, meaning of the word would not be displayed.<br>
-				@ You will get a maximum of 10 points for a successful guess.
-			</span>
-		</h5>
-		<h2>
-			Guess the WORD!!
-		</h2>
-		<br>
-		<h5>
+			<span id="meaning" style="display:none;"></span>
+			<!--
 			<span id="meaningarea" style="display:block">
+				
 				<span id="showHint" class="pointer" style="display:none;"><b>See Meaning >></b></span>
 				<span class="pointer" id="hideHint" style="display:none;"><b>Hide Meaning <<</b></span>
+				
 				<span id="meaning"></span>
 			</span>
+			-->
 		</h5>
 		<h2>
 			<span id="blankWord" class="label label-default"></span><br>
@@ -66,8 +191,8 @@
 		<span id="playarea" style="display:none;">
 			<h3>
 				<span id="guessarea" style="display:none">
-					<input type="text" name="inputLetter" id="letter" maxlength="1" size="1" autofocus="autofocus" autocomplete="off"></input>
-					<button name="btnGuess" id="btnGuessLetter" class="btn btn-success" type="button">Guess?</button><br><br>
+					<input type="text" class="input-text-box" name="inputLetter" id="letter" maxlength="1" size="1" autofocus="autofocus" autocomplete="off"></input>
+					<button name="btnGuess" id="btnGuessLetter" class="btn btn-success glyphicon glyphicon-menu-right" style="top:0px;" type="button"></button>
 				</span>
 				<span id="loseBlock" style="display:none">
 					The word was <span id="correctWord" class="label label-info"></span><br><br>
@@ -76,13 +201,17 @@
 				<span id="winBlock" style="display:none">
 					<br>
 					You <span class="label label-primary">WIN</span>
+					<!--
 					<br><br>
 					You score <span class="label label-primary" id="score"></span> points.
+					-->
 				</span>
 			</h3>				
+			<!--
 			<h4>
 				You have <span id="noOfAttemptLeft" class="label label-success"></span> attempts left.
 			</h4>
+			-->
 			<h4>
 				<span id="errorMessage" class="label label-danger"></span> 
 			</h4>
@@ -109,6 +238,7 @@
 <script type="text/javascript" language="javascript" src="dictionary.json.2"></script>
 <script type="text/javascript" language="javascript" src="dictionary.json.3"></script>
 <script>
+
 var words = '';
 var dictionary = '';
 var dictionarySize = [109,2931,1998];
@@ -123,6 +253,7 @@ $(document).ready(function() {
 	lettersUsed = '';
 	isSuccessfulAttempt = false;
 	noOfAttempts = attemptsMaster[$(".level:checked").val()-1];
+	updateAttemptsLeft();
 	getMaxId();
 	$("#newGame").focus();
 	
@@ -222,33 +353,6 @@ $(document).ready(function() {
 		}
 	}
 	
-	/*
-	function fillLetter(){
-		if(onlyAlphabets($("#letter").val())){
-			inputLetter = $("#letter").val().toUpperCase();
-			if(lettersUsed.lastIndexOf(inputLetter) < 0) {
-				lettersUsed.push(inputLetter);
-				isSuccessfulAttempt = false;
-				for(i = 0 ; i < wordToBeGuessed.word.length ; i++){
-					if(inputLetter == wordToBeGuessed.word.charAt(i)){
-						guessedWord[i] = inputLetter;
-						isSuccessfulAttempt = true;
-					}
-				}
-				if(!isGameWon()){
-					if(!isSuccessfulAttempt){
-						noOfAttempts = noOfAttempts - 1;
-					}
-					displayGuessedWord(guessedWord);
-					updateNoOfAttempts(noOfAttempts);	
-				}
-			} else {
-				displayErrorMessage(inputLetter);
-			}
-		}
-	}
-	*/
-	
 	function init(){
 		index = randomizer();
 		console.log(index);
@@ -263,6 +367,7 @@ $(document).ready(function() {
 		//updateNoOfAttempts(attemptsMaster[level.val()-1]);
 		lettersUsed = [];
 		$("#blankWord").html('');
+		$("#infoArea").attr('style','display:compact');
 		$("#winBlock").attr('style','display:none');
 		$("#loseBlock").attr('style','display:none');
 		$('#meaning').html(wordToBeGuessed.meaning);
@@ -272,28 +377,13 @@ $(document).ready(function() {
 		$("#showHint").attr('style','display:block');
 		$("#hideHint").click();
 		$("#hideRules").click();
-		$('#noOfAttemptLeft').removeClass('label-danger').addClass('label-success');
+		$('#noOfAttemptLeft').removeClass('custom-danger').addClass('custom-primary');
 	}
 	
-	/*
-	function isGameWon(){
-		guessedWordStr = '';
-		for(i = 0 ; i < guessedWord.length ; i++){
-			guessedWordStr = guessedWordStr.concat(guessedWord[i]);
-		}
-		if(wordToBeGuessed.word.toUpperCase() == guessedWordStr.toUpperCase()){
-			$("#winBlock").attr('style','display:block');
-			$("#guessarea").attr('style','display:none');
-			$("#blankWord").html(wordToBeGuessed.word);
-			return true;
-		}
-		return false;
-	}
-	*/
-
 	$(".level").click(function(e){
 		words = loadWords($(this).val());
 		noOfAttempts = attemptsMaster[$(this).val()-1];
+		updateAttemptsLeft();
 		//updateNoOfAttempts(attemptsMaster[$(this).val()-1]);
 		$("#blankWord").html('');
 		$("#playarea").attr('style','display:none');
@@ -316,7 +406,7 @@ $(document).ready(function() {
 	
 	function updateAttemptsLeft(){
 		if(eval(noOfAttempts) < 4 && eval(noOfAttempts) > 0){
-			$('#noOfAttemptLeft').removeClass('label-success').addClass('label-danger');
+			$('#noOfAttemptLeft').removeClass('custom-primary').addClass('custom-danger');
 		}
 		$("#noOfAttemptLeft").html(noOfAttempts);
 	};
@@ -341,6 +431,14 @@ $(document).ready(function() {
 		}
 	}
 	
+});
+
+$("#info").click(function(){
+    $("#rules").toggle();
+});
+
+$("#hint").click(function(){
+    $("#meaning").toggle();
 });
 
 $("#scores").click(function(e){
