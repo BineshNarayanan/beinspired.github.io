@@ -121,7 +121,7 @@
 					<button type="button" class="btn btn-info btn-circle btn-lg glyphicon glyphicon-play" id="newGame" title="New Word"></button>&nbsp;
 					<button type="button" class="btn btn-primary btn-circle btn-lg glyphicon glyphicon-list" id="scores" title="Scores"></button>&nbsp;
 					<!--<button type="button" class="btn btn-warning btn-circle btn-lg glyphicon glyphicon-info-sign" id="info" title="Info" data-container="body" data-toggle="popover" data-placement="right"></button>&nbsp;-->
-					<button type="button" class="btn btn-warning btn-circle btn-lg glyphicon glyphicon-info-sign" id="info" data-container="body" data-toggle="popover" data-placement="right" data-html="true"></button>&nbsp;
+					<button type="button" class="btn btn-warning btn-circle btn-lg glyphicon glyphicon-info-sign" id="info" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true"></button>&nbsp;
 				</td>
 			</tr>
 			<!--
@@ -310,7 +310,7 @@ $(document).ready(function() {
 		var pop = $(this);
 		setTimeout(function () {
 			pop.popover('hide');
-		}, 2000);
+		}, 8000);
 	});
 	
 	$('.pop').on('shown.bs.popover', function () {
