@@ -120,7 +120,8 @@
 				<td colspan="3" align="center">
 					<button type="button" class="btn btn-info btn-circle btn-lg glyphicon glyphicon-play" id="newGame" title="New Word"></button>&nbsp;
 					<button type="button" class="btn btn-primary btn-circle btn-lg glyphicon glyphicon-list" id="scores" title="Scores"></button>&nbsp;
-					<button type="button" class="btn btn-warning btn-circle btn-lg glyphicon glyphicon-info-sign" id="info" title="Info"></button>&nbsp;
+					<!--<button type="button" class="btn btn-warning btn-circle btn-lg glyphicon glyphicon-info-sign" id="info" title="Info" data-container="body" data-toggle="popover" data-placement="right"></button>&nbsp;-->
+					<button type="button" class="btn btn-warning btn-circle btn-lg glyphicon glyphicon-info-sign" id="info" data-container="body" data-toggle="popover" data-placement="right" data-html="true"></button>&nbsp;
 				</td>
 			</tr>
 			<!--
@@ -136,9 +137,9 @@
 			<tr><td>&nbsp;</td></tr>
 			<tr id="infoArea" style="display:none;">
 				<td colspan="3" align="center" style="border:0px solid red;padding-left:78px;">
-					<div class="custom-div custom-primary" id="noOfAttemptLeft" title="Attempts">11</div>
-					<div class="custom-div custom-warning" id="score" title="Score">0</div>
-					<div class="custom-div custom-info" id="hint" title="Hint">?</div>
+					<div class="pop custom-div custom-primary" id="noOfAttemptLeft" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="left" data-content="Chances">11</div>
+					<div class="pop custom-div custom-info" id="hint" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="bottom" data-content="Hint">?</div>
+					<div class="pop custom-div custom-warning" id="score" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="right" data-content="Points">0</div>
 				</td>
 			</tr>
 		</table>
@@ -158,6 +159,7 @@
 			<div class="col-lg-3" style="border:0px solid blue"></div>
 		</div>
 		-->
+		<!--
 		<div class="row">
 			<div style="border:0px solid blue;" class="col-lg-2">&nbsp;</div>
 			<div style="border:0px solid blue;" class="col-lg-8">
@@ -171,11 +173,13 @@
 			</div>
 			<div style="border:0px solid blue;" class="col-lg-2">&nbsp;</div>
 		</div>
+		-->
 	</div>
 	<div id="body" class="container" align="center" style="display:block;border:0px red solid;">
+		<!--
 		<h5>
 			<span id="meaning" style="display:none;"></span>
-			<!--
+			
 			<span id="meaningarea" style="display:block">
 				
 				<span id="showHint" class="pointer" style="display:none;"><b>See Meaning >></b></span>
@@ -183,10 +187,11 @@
 				
 				<span id="meaning"></span>
 			</span>
-			-->
+			
 		</h5>
+		-->
 		<h2>
-			<span id="blankWord" class="label label-default"></span><br>
+			<span id="blankWord" class="label label-default" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="right" data-content="Meaning"></span><br>
 		</h2>
 		<span id="playarea" style="display:none;">
 			<h3>
@@ -256,6 +261,8 @@ $(document).ready(function() {
 	updateAttemptsLeft();
 	getMaxId();
 	//$("#newGame").focus();
+	$('[data-toggle="popover"]').popover();
+	
 	
 	$("#newGame").click(function(e){
 		$("#scoreBoard").attr('style','display:none');
@@ -274,6 +281,43 @@ $(document).ready(function() {
 			}
 		}
 		displayMeaning();
+		$('#noOfAttemptLeft').popover('show','animation:true');
+		$('#hint').popover('show','animation:true');
+		$('#score').popover('show','animation:true');
+	});
+	
+	rules = '<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>Guess the word one letter at a time.</span><br>'+
+	'<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>A correct guess wouldnt reduce the number of chances.</span><br>'+
+	'<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>You get 11, 9, 7 chances in Easy, Average and Tough level respectively.</span><br>'+
+	'<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>At level Tough, meaning of the word would not be displayed.</span><br>'+
+	'<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>You will get a maximum of 10 points for a WIN.</span>';
+	
+	$('#info').attr('data-content',rules);
+	/*
+	info
+	
+	'<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+	*/
+	
+	$('#blankWord').on('shown.bs.popover', function () {
+		var pop = $(this);
+		setTimeout(function () {
+			pop.popover('hide');
+		}, 4000);
+	});
+	
+	$('#info').on('shown.bs.popover', function () {
+		var pop = $(this);
+		setTimeout(function () {
+			pop.popover('hide');
+		}, 2000);
+	});
+	
+	$('.pop').on('shown.bs.popover', function () {
+		var pop = $(this);
+		setTimeout(function () {
+			pop.popover('hide');
+		}, 2000);
 	});
 	
 	$(document).on("keypress", "#letter", function(e) {
@@ -371,6 +415,7 @@ $(document).ready(function() {
 		$("#winBlock").attr('style','display:none');
 		$("#loseBlock").attr('style','display:none');
 		$('#meaning').html(wordToBeGuessed.meaning);
+		$('#blankWord').attr('data-content',wordToBeGuessed.meaning);
 		$("#playarea").attr('style','display:block');
 		$("#guessarea").attr('style','display:block');
 		$("#errorMessage").html('');
@@ -390,6 +435,7 @@ $(document).ready(function() {
 		$("#showHint").attr('style','display:none');
 		$("#hideHint").attr('style','display:none');
 		$('#meaning').html('');
+		$("#infoArea").attr('style','display:none');
 		displayMeaning();
 	});
 	
@@ -431,6 +477,12 @@ $(document).ready(function() {
 		}
 	}
 	
+	/*
+	$(function () {
+	  $('[data-toggle="popover"]').popover();
+	})
+	*/
+	//$('#noOfAttemptLeft').popover(options)
 });
 
 $("#info").click(function(){
@@ -439,6 +491,7 @@ $("#info").click(function(){
 
 $("#hint").click(function(){
     $("#meaning").toggle();
+	$('#blankWord').popover('show','animation:true');
 });
 
 $("#scores").click(function(e){
