@@ -99,7 +99,7 @@
 	<div id="header" class="container" align="center" style="border:0px red solid;">
 		<div class="row">
 			<div class="col-lg-12" style="border-radius:5px;background-color:lightgreen;color:beige;">
-				<h1>SPELL-BOUND</h1>
+				<h1>SPELL BOMB</h1>
 			</div>
 		</div>
 		
@@ -120,20 +120,9 @@
 				<td colspan="3" align="center">
 					<button type="button" class="btn btn-info btn-circle btn-lg glyphicon glyphicon-play" id="newGame" title="New Word"></button>&nbsp;
 					<button type="button" class="btn btn-primary btn-circle btn-lg glyphicon glyphicon-list" id="scores" title="Scores"></button>&nbsp;
-					<!--<button type="button" class="btn btn-warning btn-circle btn-lg glyphicon glyphicon-info-sign" id="info" title="Info" data-container="body" data-toggle="popover" data-placement="right"></button>&nbsp;-->
 					<button type="button" class="btn btn-warning btn-circle btn-lg glyphicon glyphicon-info-sign" id="info" data-container="body" data-toggle="popover" data-placement="bottom" data-html="true"></button>&nbsp;
 				</td>
 			</tr>
-			<!--
-			<tr><td>&nbsp;</td></tr>
-			<tr>
-				<td colspan="3" align="center">
-					<button type="button" class="btn btn-success" id="noOfAttemptLeft" title="Attempts"></button>
-					<button type="button" class="btn btn-warning" id="score" title="Score">0</button>
-					<button type="button" class="btn btn-primary" id="hint" title="Hint">?</button>
-				</td>
-			</tr>
-			-->
 			<tr><td>&nbsp;</td></tr>
 			<tr id="infoArea" style="display:none;">
 				<td colspan="3" align="center" style="border:0px solid red;padding-left:78px;">
@@ -143,53 +132,8 @@
 				</td>
 			</tr>
 		</table>
-		<!--
-		<div class="row" style="border:1px solid red">
-			<div class="col-lg-5" style="border:0px solid blue"></div>
-			<div class="col-lg-6">
-				<div class="row">
-					<div class="col-md-2" style="background-color: #5cb85c;border-radius: 5px;line-height: 2;color: white;padding: 2px 0px 2px 0px;">
-					</div>
-					<div class="col-md-2" style="background-color: #f0ad4e;border-radius: 5px;line-height: 2;color: white;padding: 2px 0px 2px 0px;;">
-					</div>
-					<div class="col-md-2" style="background-color: #f0ad4e;border-radius: 5px;line-height: 2;color: white;padding: 2px 0px 2px 0px;;">
-					</div>
-				</div>
-			</div>
-			<div class="col-lg-3" style="border:0px solid blue"></div>
-		</div>
-		-->
-		<!--
-		<div class="row">
-			<div style="border:0px solid blue;" class="col-lg-2">&nbsp;</div>
-			<div style="border:0px solid blue;" class="col-lg-8">
-				<span id="rules" style="display:none">
-					<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>Guess the word one letter at a time.</span><br>
-					<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>A correct guess wouldnt reduce the number of chances.</span><br>
-					<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>You get 11, 9, 7 chances in Easy, Average and Tough level respectively.</span><br>
-					<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>At level Tough, meaning of the word would not be displayed.</span><br>
-					<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>You will get a maximum of 10 points for a WIN.</span>
-				</span>
-			</div>
-			<div style="border:0px solid blue;" class="col-lg-2">&nbsp;</div>
-		</div>
-		-->
 	</div>
 	<div id="body" class="container" align="center" style="display:block;border:0px red solid;">
-		<!--
-		<h5>
-			<span id="meaning" style="display:none;"></span>
-			
-			<span id="meaningarea" style="display:block">
-				
-				<span id="showHint" class="pointer" style="display:none;"><b>See Meaning >></b></span>
-				<span class="pointer" id="hideHint" style="display:none;"><b>Hide Meaning <<</b></span>
-				
-				<span id="meaning"></span>
-			</span>
-			
-		</h5>
-		-->
 		<h2>
 			<span id="blankWord" class="label label-default" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="right" data-content="Meaning"></span><br>
 		</h2>
@@ -206,17 +150,8 @@
 				<span id="winBlock" style="display:none">
 					<br>
 					You <span class="label label-primary">WIN</span>
-					<!--
-					<br><br>
-					You score <span class="label label-primary" id="score"></span> points.
-					-->
 				</span>
 			</h3>				
-			<!--
-			<h4>
-				You have <span id="noOfAttemptLeft" class="label label-success"></span> attempts left.
-			</h4>
-			-->
 			<h4>
 				<span id="errorMessage" class="label label-danger"></span> 
 			</h4>
@@ -293,11 +228,6 @@ $(document).ready(function() {
 	'<span class="glyphicon glyphicon-hand-right"></span>&nbsp;<span>You will get a maximum of 10 points for a WIN.</span>';
 	
 	$('#info').attr('data-content',rules);
-	/*
-	info
-	
-	'<div class="popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
-	*/
 	
 	$('#blankWord').on('shown.bs.popover', function () {
 		var pop = $(this);
@@ -457,19 +387,6 @@ $(document).ready(function() {
 		$("#noOfAttemptLeft").html(noOfAttempts);
 	};
 	
-	/*
-	function updateNoOfAttempts(noOfAttempts){
-		if (eval(noOfAttempts) == 0) {
-			$("#correctWord").html(wordToBeGuessed.word);
-			$("#loseBlock").attr('style','display:block');
-			$("#guessarea").attr('style','display:none');
-		} else if(eval(noOfAttempts) < 4 && eval(noOfAttempts) > 0){
-			$('#noOfAttemptLeft').removeClass('label-success').addClass('label-danger');
-		}
-		$("#noOfAttemptLeft").html(noOfAttempts);
-	}
-	*/
-
 	function displayGuessedWord(){
 		$("#blankWord").html('');
 		for(i = 0 ; i < guessedWord.length ; i++){
@@ -477,12 +394,6 @@ $(document).ready(function() {
 		}
 	}
 	
-	/*
-	$(function () {
-	  $('[data-toggle="popover"]').popover();
-	})
-	*/
-	//$('#noOfAttemptLeft').popover(options)
 });
 
 $("#info").click(function(){
@@ -597,33 +508,7 @@ function randomizer(){
 		return Math.floor((Math.random() * dictionarySize[2]) + 1);
 	}
 }
-/*
-function loadWordsLocally(){
-	wordDict = "{\"SEA-DRAKE\":\"The pewit gull.\",\"DEFIGURE\":\"To delineate.These two stones as they are here defigured. Weever.\",\"PECULIARIZE\":\"To make peculiar; to set appart or assign, as an exclusivepossession. [R.] Dr. John Smith.\"}";
-	wordDict = JSON.parse(wordDict);
-	var words = [];
-	$.each( wordDict, function( key, val ) {
-		var obj = new Object();
-		obj.word = key;
-		obj.meaning = val;
-		words.push(obj);
-	});
-	return words;
-}
-*/
 
-/*function loadWords(level){
-	var words = [];
-	$.getJSON('dictionary.json.'+level, function(wordDict) {
-		$.each( JSON.parse(wordDict), function( key, val ) {
-			var obj = new Object();
-			obj.word = key;
-			obj.meaning = val;
-			words.push(obj);
-		});
-	});
-	return words;
-}*/
 
 function loadWords(level){
 	var words = [];
